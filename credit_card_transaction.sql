@@ -2,13 +2,19 @@ create database credit_card;
 use credit_card;
 
 -- DATA CLEAN AND PREPROCESSING
-ALTER TABLE  credit_card_transaction
-CHANGE DATE card_date varchar(50);
+-- ALTER TABLE  credit_card_transaction
+-- CHANGE DATE card_date varchar(50);
 
-DESCRIBE credit_card_transaction;
+-- DESCRIBE credit_card_transaction;
 
-ALTER TABLE credit_card_transaction
-MODIFY card_date DATE;
+-- ALTER TABLE credit_card_transaction
+-- MODIFY card_date DATE;
+
+-- ALTER TABLE credit_card_transaction
+-- change dates card_date  date;
+
+-- ALTER TABLE credit_card_transaction
+-- modify city varchar(50);
 
 -- 1.write a query to print top 5 cities highest spent and percenatage of contribution of total credit card spends
 create view top_5_city_spent as 
@@ -21,7 +27,7 @@ WITH total as
 		(select sum(amount)as city_spent_total
 		 from credit_card_transaction)
 select t.city,t.total_spent, 
-round(avg(t.total_spent/tc.city_spent_total),2)*100 as total_perc_city
+round((t.total_spent/tc.city_spent_total),2)*100 as total_perc_city
 from total t join total_city tc
 on 1=1
 group by 1,2
@@ -31,19 +37,28 @@ limit 5;
 
 
 -- 2.write a query to print highest spend month and amount spend in that month for each card type
+CREATE VIEW  highest_spend_amt_mnt AS
 WITH date_wise AS
-    (select  card_type, monthname(card_date) as month,year(card_date) AS year,sum(amount) AS total_spend 
-     from credit_card_transaction
-	 group by 1,month,year
+    (SELECT 
+    card_type,
+    MONTHNAME(card_date) AS month,
+    YEAR(card_date) AS year,
+    SUM(amount) AS total_spend
+FROM
+    credit_card_transaction
+GROUP BY 1 , month , year
 )
 ,ranking AS 
      (select *,
-     dense_rank()over(partition by card_type order by total_spend desc ) AS highest_rank
+     dense_rank()over(partition by card_type order by total_spend desc) AS highest_rank
      from date_wise
 )
-select card_type,month,year,total_spend
-from ranking
-where highest_rank=1;
+SELECT 
+    card_type, month, year, total_spend
+FROM
+    ranking
+WHERE
+    highest_rank = 1;
 
 -- 3.write a query to print transaction details(all column from table) for each card type when its reaches a
 -- cumulative of 100000 total spends
@@ -54,28 +69,28 @@ WITH cte AS
       from credit_card_transaction)
 , cte2 AS 
       (select *,
-       dense_rank()over(partition by card_type order by cumulative desc )as dn
+       dense_rank()over(partition by card_type order by cumulative  )as dn
        from cte 
        where cumulative>=100000)
-select * from cte2
+select city,card_type,cumulative from cte2
 where dn=1;
   
 -- 4.write a query to find the city which had lowest percenate spend for gold card type
 WITH  gold_spend_city  AS
         (select city, sum(amount) as spend
-        from credit_card_transaction 
+         from credit_card_transaction 
          where card_type='gold'
          group by city)
 ,total_spend AS 
        (select city, sum(amount) as spend_city
        from credit_card_transaction
 		group by city)
-select gc.city,gc.spend,round(avg(spend/spend_city)*100,2) as perc
-from gold_spend_city gc join total_spend ts
+select gc.city,gc.spend,round((spend/spend_city)*100 ,2)as perc
+from gold_spend_city gc inner join total_spend ts
 on gc.city=ts.city
 group by gc.city
 order by perc 
-limit 1;
+limit 3;
        
       --  and  for platinum
 with platinum_spend_city as 
@@ -223,7 +238,7 @@ from cte2 join  cte
 on cte2.year=cte.year
 group by months,year;
 
--- 13. write a query to find no_of-transaction growth in every month of year fro benaglore region
+-- 13. write a query to find no_of-transaction growth in every month of year fro bengalore region
 WITH cte AS 
        (select extract(month from card_date) as month,extract(year from card_date) as year,
         count(card_type) as no_of_transaction,
@@ -240,4 +255,3 @@ group by month,year;
 
 
 
-use credit_Card
