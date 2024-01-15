@@ -4,8 +4,8 @@
 
 Key Objectives:
 
-1.Fraud Detection: The primary objective of this project is to design and implement a robust fraud detection system. This involves creating algorithms and models that can automatically identify unusual and potentially fraudulent transactions based on various parameters such as transaction amount, location, time, and spending habits.
-
+1. Fraud Detection: The primary objective of this project is to design and implement a robust fraud detection system. This involves creating algorithms and models that can automatically identify unusual and potentially fraudulent transactions based on various parameters such as transaction amount, location, time, and spending habits.
+ 
 2. Pattern Recognition: By analyzing historical credit card transaction data, the project aims to uncover hidden patterns and trends. These patterns can provide valuable insights into customer spending behavior, seasonal trends, and peak transaction times.
 
 3. Customer Segmentation: Through clustering and segmentation techniques, the project can group customers based on their spending habits, demographics, and transaction preferences. This information can be leveraged for targeted marketing campaigns and personalized customer experiences.
